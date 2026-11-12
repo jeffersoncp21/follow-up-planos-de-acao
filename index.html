@@ -1,0 +1,2492 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Follow-up de Planos de Ação - Auditoria Interna</title>
+  <!-- SheetJS para leitura e exportação 100% local de arquivos Excel -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+  <style>
+    :root {
+      --bg-main: #f8fafc;
+      --bg-card: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border-color: #e2e8f0;
+      
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      
+      --status-done: #10b981;
+      --status-done-bg: #d1fae5;
+      --status-done-text: #065f46;
+      
+      --status-late: #ef4444;
+      --status-late-bg: #fee2e2;
+      --status-late-text: #991b1b;
+      
+      --status-warning: #f59e0b;
+      --status-warning-bg: #fef3c7;
+      --status-warning-text: #92400e;
+      
+      --status-ontime: #0ea5e9;
+      --status-ontime-bg: #e0f2fe;
+      --status-ontime-text: #0369a1;
+
+      --risk-high-bg: #fee2e2;
+      --risk-high-text: #991b1b;
+      --risk-med-bg: #fef3c7;
+      --risk-med-text: #92400e;
+      --risk-low-bg: #f1f5f9;
+      --risk-low-text: #475569;
+      
+      --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+      --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+      --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 20px;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1440px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    /* Header */
+    header {
+      background: var(--bg-card);
+      padding: 18px 24px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand h1 {
+      font-size: 1.45rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand p {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .today-pill {
+      background: #f1f5f9;
+      color: #334155;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.825rem;
+      font-weight: 600;
+      border: 1px solid var(--border-color);
+    }
+
+    /* Navegação por Abas */
+    .tab-navigation {
+      display: flex;
+      gap: 10px;
+      background: var(--bg-card);
+      padding: 8px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tab-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 20px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      transition: all 0.2s ease;
+    }
+
+    .tab-btn:hover {
+      background: #f1f5f9;
+      color: var(--text-main);
+    }
+
+    .tab-btn.active {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tab-badge {
+      padding: 2px 7px;
+      border-radius: 12px;
+      font-size: 0.725rem;
+      font-weight: 700;
+      background: #ef4444;
+      color: #ffffff;
+    }
+
+    .tab-btn.active .tab-badge {
+      background: #ffffff;
+      color: var(--primary);
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-outline {
+      background: #ffffff;
+      border-color: var(--border-color);
+      color: var(--text-main);
+    }
+
+    .btn-outline:hover {
+      background: #f8fafc;
+      border-color: #cbd5e1;
+    }
+
+    .btn-success {
+      background: #10b981;
+      color: #ffffff;
+    }
+
+    .btn-success:hover {
+      background: #059669;
+    }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .btn-secondary:hover {
+      background: #cbd5e1;
+    }
+
+    /* Upload Area Compacto */
+    .upload-zone {
+      background: var(--bg-card);
+      border: 1.5px dashed #cbd5e1;
+      border-radius: 10px;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+
+    .upload-zone:hover, .upload-zone.dragover {
+      border-color: var(--primary);
+      background: #eff6ff;
+    }
+
+    .upload-zone input[type="file"] {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
+      width: 100%;
+      height: 100%;
+      z-index: 2;
+    }
+
+    .upload-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .upload-icon {
+      width: 22px;
+      height: 22px;
+      color: var(--primary);
+      flex-shrink: 0;
+    }
+
+    .upload-text {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-main);
+    }
+
+    .upload-subtext {
+      font-size: 0.775rem;
+      color: var(--text-muted);
+      margin-left: 4px;
+    }
+
+    .security-notice {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.75rem;
+      color: #059669;
+      background: #ecfdf5;
+      padding: 3px 9px;
+      border-radius: 6px;
+      border: 1px solid #a7f3d0;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+      border: 1px solid #a7f3d0;
+    }
+
+    /* Top Dashboard */
+    .top-dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    @media (max-width: 992px) {
+      .top-dashboard { grid-template-columns: 1fr; }
+    }
+
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 14px;
+    }
+
+    @media (min-width: 600px) and (max-width: 992px) {
+      .kpi-grid { grid-template-columns: repeat(4, 1fr); }
+    }
+
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .kpi-card::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      width: 4px;
+    }
+
+    .kpi-total::before { background-color: #3b82f6; }
+    .kpi-late::before { background-color: var(--status-late); }
+    .kpi-pct::before { background-color: #f97316; }
+    .kpi-avg::before { background-color: #8b5cf6; }
+
+    .kpi-title {
+      font-size: 0.785rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+    }
+
+    .kpi-value {
+      font-size: 1.85rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .kpi-subtext {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+    }
+
+    /* Chart Card */
+    .chart-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .chart-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .chart-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .chart-badge {
+      background: #fee2e2;
+      color: #991b1b;
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 12px;
+    }
+
+    .chart-body {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      max-height: 180px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .bar-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.825rem;
+      cursor: pointer;
+      padding: 3px 6px;
+      border-radius: 6px;
+      transition: background 0.15s ease;
+    }
+
+    .bar-row:hover { background: #f1f5f9; }
+
+    .bar-label {
+      width: 140px;
+      min-width: 140px;
+      font-weight: 600;
+      color: #334155;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .bar-track {
+      flex: 1;
+      height: 20px;
+      background: #f1f5f9;
+      border-radius: 4px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #f87171 0%, #ef4444 100%);
+      border-radius: 4px;
+      transition: width 0.4s ease;
+    }
+
+    .bar-value {
+      width: 60px;
+      min-width: 60px;
+      text-align: right;
+      font-weight: 700;
+      color: #b91c1c;
+    }
+
+    .chart-empty {
+      padding: 24px;
+      text-align: center;
+      color: #10b981;
+      font-size: 0.875rem;
+      font-weight: 600;
+    }
+
+    /* Filter Toolbar */
+    .filter-panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 16px 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .filter-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 12px;
+      align-items: end;
+    }
+
+    .filter-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .filter-group label {
+      font-size: 0.775rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
+    .filter-select, .search-input {
+      width: 100%;
+      padding: 8px 12px;
+      font-size: 0.875rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: #ffffff;
+      color: var(--text-main);
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    .filter-select:focus, .search-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+    }
+
+    .filter-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Table Container */
+    .table-container {
+      background: var(--bg-card);
+      border-radius: 12px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .table-responsive {
+      max-height: 600px;
+      overflow-x: auto;
+      overflow-y: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.875rem;
+    }
+
+    thead {
+      position: sticky;
+      top: 0;
+      background: #f8fafc;
+      z-index: 10;
+      box-shadow: 0 1px 0 var(--border-color);
+    }
+
+    th {
+      padding: 12px 16px;
+      font-weight: 600;
+      color: #475569;
+      font-size: 0.775rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      border-bottom: 1px solid var(--border-color);
+      user-select: none;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    th:hover { background: #e2e8f0; }
+
+    td {
+      padding: 12px 16px;
+      border-bottom: 1px solid #f1f5f9;
+      color: var(--text-main);
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+
+    tr:hover td { background-color: #f8fafc; }
+
+    /* DESTAQUE EM VERMELHO: Atrasado com Risco Alto */
+    tr.danger-high-risk td {
+      background-color: #fee2e2 !important;
+      color: #7f1d1d !important;
+      border-bottom: 1px solid #fca5a5 !important;
+    }
+
+    tr.danger-high-risk td:first-child {
+      border-left: 5px solid #dc2626 !important;
+    }
+
+    tr.danger-high-risk:hover td {
+      background-color: #fecaca !important;
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 0.775rem;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    .badge-concluido {
+      background-color: var(--status-done-bg);
+      color: var(--status-done-text);
+      border: 1px solid #a7f3d0;
+    }
+
+    .badge-atrasado {
+      background-color: var(--status-late-bg);
+      color: var(--status-late-text);
+      border: 1px solid #fecaca;
+    }
+
+    .badge-vence-7 {
+      background-color: var(--status-warning-bg);
+      color: var(--status-warning-text);
+      border: 1px solid #fde68a;
+    }
+
+    .badge-no-prazo {
+      background-color: var(--status-ontime-bg);
+      color: var(--status-ontime-text);
+      border: 1px solid #bae6fd;
+    }
+
+    .badge-neutro {
+      background-color: #f1f5f9;
+      color: #64748b;
+      border: 1px solid #e2e8f0;
+    }
+
+    .badge-delay {
+      display: inline-flex;
+      align-items: center;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    .badge-delay.late {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .badge-delay.none { color: #94a3b8; }
+
+    /* Risco Badges */
+    .badge-risk {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge-risk-alto {
+      background-color: var(--risk-high-bg);
+      color: var(--risk-high-text);
+      border: 1px solid #fca5a5;
+    }
+
+    .badge-risk-medio {
+      background-color: var(--risk-med-bg);
+      color: var(--risk-med-text);
+      border: 1px solid #fde68a;
+    }
+
+    .badge-risk-baixo {
+      background-color: var(--risk-low-bg);
+      color: var(--risk-low-text);
+      border: 1px solid #cbd5e1;
+    }
+
+    .prazo-tag {
+      font-size: 0.7rem;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #ede9fe;
+      color: #5b21b6;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+
+    .table-footer {
+      padding: 12px 20px;
+      background: #f8fafc;
+      border-top: 1px solid var(--border-color);
+      font-size: 0.825rem;
+      color: var(--text-muted);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    /* Empty state */
+    .empty-state {
+      padding: 48px 24px;
+      text-align: center;
+      color: var(--text-muted);
+    }
+
+    .empty-state svg {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 12px;
+      color: #94a3b8;
+    }
+
+    .empty-state h3 {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    /* ====================================================
+       ESTILOS DA ABA COBRANÇAS
+    ==================================================== */
+    .cobrancas-container {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .cobrancas-banner {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 12px;
+      padding: 16px 20px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .cobrancas-banner-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #1e40af;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .cobrancas-banner-info {
+      font-size: 0.85rem;
+      color: #3b82f6;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .deadline-badge {
+      background: #1e40af;
+      color: #ffffff;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.8rem;
+    }
+
+    .email-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.2s ease;
+    }
+
+    .email-card:hover {
+      box-shadow: var(--shadow-md);
+    }
+
+    .email-card.escalonado {
+      border-color: #fca5a5;
+    }
+
+    .email-card-header {
+      padding: 16px 20px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .email-card.escalonado .email-card-header {
+      background: #fef2f2;
+      border-bottom-color: #fecaca;
+    }
+
+    .person-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .person-avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #2563eb;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.05rem;
+    }
+
+    .email-card.escalonado .person-avatar {
+      background: #dc2626;
+    }
+
+    .person-details h3 {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .person-details p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .card-tags {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .escalonado-tag {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #f87171;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .cordial-tag {
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 20px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .email-card-body {
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .email-meta-grid {
+      display: grid;
+      grid-template-columns: 80px 1fr;
+      gap: 8px 14px;
+      font-size: 0.85rem;
+      align-items: center;
+      background: #f8fafc;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+    }
+
+    .email-meta-label {
+      font-weight: 700;
+      color: #475569;
+      text-transform: uppercase;
+      font-size: 0.75rem;
+    }
+
+    .email-meta-value {
+      color: var(--text-main);
+      font-weight: 500;
+      word-break: break-all;
+    }
+
+    .email-preview-box {
+      background: #ffffff;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 16px;
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 0.85rem;
+      white-space: pre-wrap;
+      line-height: 1.6;
+      color: #1e293b;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .plans-mini-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+      margin-top: 4px;
+    }
+
+    .plans-mini-table th {
+      padding: 8px 10px;
+      background: #f1f5f9;
+      font-weight: 700;
+      font-size: 0.725rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .plans-mini-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid #f1f5f9;
+      white-space: normal;
+    }
+
+    .email-card-footer {
+      padding: 14px 20px;
+      background: #f8fafc;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .toast-msg {
+      font-size: 0.8rem;
+      color: #059669;
+      font-weight: 600;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .toast-msg.show {
+      opacity: 1;
+    }
+
+    @media print {
+      body { background: #fff; padding: 0; }
+      header, .upload-zone, .filter-panel, .header-actions, .filter-actions, .tab-navigation, .email-card-footer { display: none !important; }
+      .table-responsive { max-height: none; overflow: visible; }
+      tr.danger-high-risk td { background-color: #fee2e2 !important; -webkit-print-color-adjust: exact; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Top Header -->
+    <header>
+      <div class="brand">
+        <h1>
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#2563eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+          </svg>
+          Follow-up de Planos de Ação
+        </h1>
+        <p>Auditoria Interna • Acompanhamento automatizado de prazos, cobranças e escalonamento</p>
+      </div>
+
+      <div class="header-actions">
+        <span class="today-pill" id="todayIndicator">📅 Hoje: --/--/----</span>
+        <button class="btn btn-outline" id="btnSampleData" title="Carregar dados ilustrativos para teste imediato">
+          💡 Carregar Dados de Exemplo
+        </button>
+      </div>
+    </header>
+
+    <!-- Navegação por Abas -->
+    <div class="tab-navigation">
+      <button class="tab-btn active" id="tabBtnGeral" data-tab="geral">
+        📊 Visão Geral & Planos
+      </button>
+      <button class="tab-btn" id="tabBtnCobrancas" data-tab="cobrancas">
+        ✉️ Cobranças por Responsável
+        <span class="tab-badge" id="cobrancasCountBadge" style="display: none;">0</span>
+      </button>
+    </div>
+
+    <!-- Upload Section Compacto -->
+    <div class="upload-zone" id="dropZone">
+      <input type="file" id="fileInput" accept=".xlsx, .xls">
+      <div class="upload-left">
+        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+          <polyline points="17 8 12 3 7 8"/>
+          <line x1="12" y1="3" x2="12" y2="15"/>
+        </svg>
+        <span class="upload-text">
+          Clique aqui ou arraste a planilha <strong style="color: var(--primary);">planos_de_acao.xlsx</strong> 
+          <span class="upload-subtext">(.xlsx, .xls)</span>
+        </span>
+      </div>
+      <span class="security-notice">
+        🔒 100% Local e Seguro
+      </span>
+    </div>
+
+    <!-- ==============================================
+         CONTEÚDO DA ABA 1: VISÃO GERAL & PLANOS
+    ============================================== -->
+    <div id="tabContentGeral" style="display: flex; flex-direction: column; gap: 18px;">
+      
+      <!-- Painel Topo: Métricas e Gráfico de Barras por Área -->
+      <div class="top-dashboard" id="dashboardPanel" style="display: none;">
+        <div class="kpi-grid">
+          <div class="kpi-card kpi-total">
+            <span class="kpi-title">Total de Planos</span>
+            <span class="kpi-value" id="kpiTotal">0</span>
+            <span class="kpi-subtext">Total cadastrado na planilha</span>
+          </div>
+
+          <div class="kpi-card kpi-late">
+            <span class="kpi-title">Qtd. Atrasados</span>
+            <span class="kpi-value" style="color: var(--status-late);" id="kpiLate">0</span>
+            <span class="kpi-subtext" id="kpiLateSub">Planos com prazo expirado</span>
+          </div>
+
+          <div class="kpi-card kpi-pct">
+            <span class="kpi-title">% Atrasado</span>
+            <span class="kpi-value" style="color: #ea580c;" id="kpiLatePct">0%</span>
+            <span class="kpi-subtext">Do volume total de planos</span>
+          </div>
+
+          <div class="kpi-card kpi-avg">
+            <span class="kpi-title">Atraso Médio</span>
+            <span class="kpi-value" style="color: #7c3aed;" id="kpiAvgLate">0 <small style="font-size: 1rem; font-weight: 500;">dias</small></span>
+            <span class="kpi-subtext">Média dos planos em atraso</span>
+          </div>
+        </div>
+
+        <!-- Gráfico de Barras: Atrasados por Área -->
+        <div class="chart-card">
+          <div class="chart-header">
+            <span class="chart-title">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="20" x2="18" y2="10"></line>
+                <line x1="12" y1="20" x2="12" y2="4"></line>
+                <line x1="6" y1="20" x2="6" y2="14"></line>
+              </svg>
+              Planos Atrasados por Área
+            </span>
+            <span class="chart-badge" id="chartTotalBadge">0 atrasados</span>
+          </div>
+          <div class="chart-body" id="chartBarsContainer"></div>
+        </div>
+      </div>
+
+      <!-- Painel de Filtros -->
+      <div class="filter-panel" id="filterPanel" style="display: none;">
+        <div class="filter-row">
+          <div class="filter-group">
+            <label for="filterArea">Área</label>
+            <select id="filterArea" class="filter-select">
+              <option value="">Todas as Áreas</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="filterResponsavel">Responsável</label>
+            <select id="filterResponsavel" class="filter-select">
+              <option value="">Todos os Responsáveis</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="filterRisco">Risco</label>
+            <select id="filterRisco" class="filter-select">
+              <option value="">Todos os Riscos</option>
+              <option value="Alto">Alto</option>
+              <option value="Médio">Médio</option>
+              <option value="Baixo">Baixo</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="filterStatus">Status</label>
+            <select id="filterStatus" class="filter-select">
+              <option value="TODOS">Todos os Status</option>
+              <option value="ATRASADO">Atrasados</option>
+              <option value="VENCE_7_DIAS">Vence em 7 dias</option>
+              <option value="NO_PRAZO">No prazo</option>
+              <option value="CONCLUIDO">Concluídos</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="searchInput">Pesquisa Rápida</label>
+            <input type="text" id="searchInput" class="search-input" placeholder="Buscar por qualquer termo...">
+          </div>
+
+          <div class="filter-actions">
+            <button class="btn btn-secondary" id="btnResetFilters" title="Limpar todos os filtros">
+              🔄 Limpar Filtros
+            </button>
+            <button class="btn btn-outline" id="btnDefaultSort" title="Voltar para a ordenação: mais atrasado primeiro">
+              ⏱️ Mais Atrasados 1º
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabela -->
+      <div class="table-container" id="tableWrapper">
+        <div class="empty-state" id="emptyState">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="16" rx="2"></rect>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+            <line x1="9" y1="20" x2="9" y2="10"></line>
+          </svg>
+          <h3>Nenhuma planilha carregada ainda</h3>
+          <p>Selecione seu arquivo <strong>planos_de_acao.xlsx</strong> acima ou clique em "Carregar Dados de Exemplo" para visualizar o funcionamento.</p>
+        </div>
+
+        <div class="table-responsive" id="tableResponsive" style="display: none;">
+          <table id="dataTable">
+            <thead>
+              <tr id="tableHeaderRow"></tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+        </div>
+
+        <div class="table-footer" id="tableFooter" style="display: none;">
+          <span id="footerCount">Exibindo 0 de 0 planos</span>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <span id="loadedFileName" style="font-weight: 500;"></span>
+            <button class="btn btn-success" id="btnExportExcel" title="Exportar dados com os status calculados em Excel">
+              📥 Exportar Excel (.xlsx)
+            </button>
+            <button class="btn btn-outline" id="btnPrint" title="Imprimir ou Salvar em PDF">
+              🖨️ Imprimir / PDF
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ==============================================
+         CONTEÚDO DA ABA 2: COBRANÇAS
+    ============================================== -->
+    <div id="tabContentCobrancas" class="cobrancas-container" style="display: none;">
+      
+      <!-- Banner Informativo -->
+      <div class="cobrancas-banner">
+        <div>
+          <div class="cobrancas-banner-title">
+            📧 Central de Cobranças e Follow-up por Responsável
+          </div>
+          <div style="font-size: 0.8rem; color: #475569; margin-top: 4px;">
+            Agrupa automaticamente planos atrasados e vencendo em até 7 dias, gerando mensagens individualizadas prontas para envio.
+          </div>
+        </div>
+        <div class="cobrancas-banner-info">
+          <span>Prazo solicitado (5 dias úteis):</span>
+          <span class="deadline-badge" id="businessDaysBadge">--/--/----</span>
+        </div>
+      </div>
+
+      <!-- Lista de Cards de E-mail por Responsável -->
+      <div id="cobrancasCardsContainer" style="display: flex; flex-direction: column; gap: 20px;">
+        <!-- Injetado via JavaScript -->
+      </div>
+
+      <!-- Estado Vazio das Cobranças -->
+      <div class="empty-state" id="cobrancasEmptyState" style="display: none; background: #ffffff; border-radius: 12px; border: 1px solid var(--border-color);">
+        <svg viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+          <polyline points="22 4 12 14.01 9 11.01"></polyline>
+        </svg>
+        <h3>Nenhuma cobrança necessária! 🎉</h3>
+        <p>Todos os planos de ação estão rigorosamente em dia ou não há pendências para os próximos 7 dias.</p>
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+    // Data de referência de Hoje
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    // Formatação amigável de hoje
+    const formattedToday = today.toLocaleDateString('pt-BR', {
+      weekday: 'long',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+    document.getElementById('todayIndicator').textContent = `📅 Hoje: ${formattedToday.charAt(0).toUpperCase() + formattedToday.slice(1)}`;
+
+    // Cálculo exato de 5 dias úteis a partir de hoje
+    function calculateBusinessDaysDate(startDate, numDays) {
+      let count = 0;
+      let cur = new Date(startDate);
+      while (count < numDays) {
+        cur.setDate(cur.getDate() + 1);
+        const dayOfWeek = cur.getDay(); // 0 = Domingo, 6 = Sábado
+        if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+          count++;
+        }
+      }
+      return cur;
+    }
+
+    const fiveBusinessDaysDate = calculateBusinessDaysDate(today, 5);
+    const formattedDeadline = fiveBusinessDaysDate.toLocaleDateString('pt-BR', {
+      weekday: 'long',
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    });
+    const formattedDeadlineShort = fiveBusinessDaysDate.toLocaleDateString('pt-BR');
+    document.getElementById('businessDaysBadge').textContent = `${formattedDeadline.charAt(0).toUpperCase() + formattedDeadline.slice(1)}`;
+
+    // Estado da Aplicação
+    let rawData = [];
+    let processedData = [];
+    let originalColumns = [];
+    let currentSortColumn = 'diasAtraso';
+    let currentSortDirection = 'desc';
+
+    // Filtros
+    let filterAreaVal = '';
+    let filterResponsavelVal = '';
+    let filterRiscoVal = '';
+    let filterStatusVal = 'TODOS';
+    let searchTerm = '';
+
+    // Elementos DOM
+    const fileInput = document.getElementById('fileInput');
+    const dropZone = document.getElementById('dropZone');
+    const btnSampleData = document.getElementById('btnSampleData');
+    const dashboardPanel = document.getElementById('dashboardPanel');
+    const filterPanel = document.getElementById('filterPanel');
+    const tableResponsive = document.getElementById('tableResponsive');
+    const emptyState = document.getElementById('emptyState');
+    const tableHeaderRow = document.getElementById('tableHeaderRow');
+    const tableBody = document.getElementById('tableBody');
+    const tableFooter = document.getElementById('tableFooter');
+    const footerCount = document.getElementById('footerCount');
+    const loadedFileName = document.getElementById('loadedFileName');
+    const btnExportExcel = document.getElementById('btnExportExcel');
+    const btnPrint = document.getElementById('btnPrint');
+    const btnDefaultSort = document.getElementById('btnDefaultSort');
+
+    // Filtros DOM
+    const filterArea = document.getElementById('filterArea');
+    const filterResponsavel = document.getElementById('filterResponsavel');
+    const filterRisco = document.getElementById('filterRisco');
+    const filterStatus = document.getElementById('filterStatus');
+    const searchInput = document.getElementById('searchInput');
+    const btnResetFilters = document.getElementById('btnResetFilters');
+
+    // Abas
+    const tabBtnGeral = document.getElementById('tabBtnGeral');
+    const tabBtnCobrancas = document.getElementById('tabBtnCobrancas');
+    const tabContentGeral = document.getElementById('tabContentGeral');
+    const tabContentCobrancas = document.getElementById('tabContentCobrancas');
+    const cobrancasCountBadge = document.getElementById('cobrancasCountBadge');
+    const cobrancasCardsContainer = document.getElementById('cobrancasCardsContainer');
+    const cobrancasEmptyState = document.getElementById('cobrancasEmptyState');
+
+    // Troca de Abas
+    tabBtnGeral.addEventListener('click', () => switchTab('geral'));
+    tabBtnCobrancas.addEventListener('click', () => switchTab('cobrancas'));
+
+    function switchTab(tab) {
+      if (tab === 'geral') {
+        tabBtnGeral.classList.add('active');
+        tabBtnCobrancas.classList.remove('active');
+        tabContentGeral.style.display = 'flex';
+        tabContentCobrancas.style.display = 'none';
+      } else {
+        tabBtnCobrancas.classList.add('active');
+        tabBtnGeral.classList.remove('active');
+        tabContentCobrancas.style.display = 'flex';
+        tabContentGeral.style.display = 'none';
+      }
+    }
+
+    // Drag and Drop
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropZone.classList.add('dragover');
+      }, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropZone.addEventListener(eventName, (e) => {
+        e.preventDefault();
+        dropZone.classList.remove('dragover');
+      }, false);
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      if (files && files.length > 0) {
+        handleFile(files[0]);
+      }
+    });
+
+    fileInput.addEventListener('change', (e) => {
+      if (e.target.files && e.target.files.length > 0) {
+        handleFile(e.target.files[0]);
+      }
+    });
+
+    btnSampleData.addEventListener('click', () => {
+      loadSampleData();
+    });
+
+    // Filtros
+    filterArea.addEventListener('change', (e) => {
+      filterAreaVal = e.target.value;
+      renderTable();
+    });
+
+    filterResponsavel.addEventListener('change', (e) => {
+      filterResponsavelVal = e.target.value;
+      renderTable();
+    });
+
+    filterRisco.addEventListener('change', (e) => {
+      filterRiscoVal = e.target.value;
+      renderTable();
+    });
+
+    filterStatus.addEventListener('change', (e) => {
+      filterStatusVal = e.target.value;
+      renderTable();
+    });
+
+    searchInput.addEventListener('input', (e) => {
+      searchTerm = e.target.value.toLowerCase().trim();
+      renderTable();
+    });
+
+    btnResetFilters.addEventListener('click', () => {
+      filterAreaVal = '';
+      filterResponsavelVal = '';
+      filterRiscoVal = '';
+      filterStatusVal = 'TODOS';
+      searchTerm = '';
+
+      filterArea.value = '';
+      filterResponsavel.value = '';
+      filterRisco.value = '';
+      filterStatus.value = 'TODOS';
+      searchInput.value = '';
+
+      renderTable();
+    });
+
+    btnDefaultSort.addEventListener('click', () => {
+      sortDataDescByDelay();
+      renderTable();
+    });
+
+    btnExportExcel.addEventListener('click', () => {
+      exportCurrentTableToExcel();
+    });
+
+    btnPrint.addEventListener('click', () => {
+      window.print();
+    });
+
+    // Leitura do Arquivo Excel
+    function handleFile(file) {
+      if (!file.name.match(/\.(xlsx|xls)$/i)) {
+        alert('Por favor, selecione um arquivo Excel válido (.xlsx ou .xls)');
+        return;
+      }
+
+      loadedFileName.textContent = `Arquivo: ${file.name}`;
+      const reader = new FileReader();
+
+      reader.onload = function(e) {
+        try {
+          const data = new Uint8Array(e.target.result);
+          const workbook = XLSX.read(data, {
+            type: 'array',
+            cellDates: true,
+            dateNF: 'yyyy-mm-dd'
+          });
+
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+          const json = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+
+          if (!json || json.length === 0) {
+            alert('A planilha carregada está vazia.');
+            return;
+          }
+
+          processExcelData(json);
+        } catch (err) {
+          console.error(err);
+          alert('Erro ao processar o arquivo Excel: ' + err.message);
+        }
+      };
+
+      reader.readAsArrayBuffer(file);
+    }
+
+    function normalizeKey(str) {
+      return String(str || '')
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .toLowerCase()
+        .replace(/[^a-z0-9]/g, "");
+    }
+
+    function parseDate(val) {
+      if (!val) return null;
+
+      if (val instanceof Date && !isNaN(val)) {
+        const d = new Date(val);
+        d.setHours(0, 0, 0, 0);
+        return d;
+      }
+
+      if (typeof val === 'number') {
+        const utcDays = Math.floor(val - 25569);
+        const utcValue = utcDays * 86400;
+        const dateInfo = new Date(utcValue * 1000);
+        const fractionalDay = val - Math.floor(val) + 0.0000001;
+        let totalSeconds = Math.floor(86400 * fractionalDay);
+        const seconds = totalSeconds % 60;
+        totalSeconds -= seconds;
+        const hours = Math.floor(totalSeconds / (60 * 60));
+        const minutes = Math.floor(totalSeconds / 60) % 60;
+        
+        const d = new Date(dateInfo.getFullYear(), dateInfo.getMonth(), dateInfo.getDate() + 1, hours, minutes, seconds);
+        d.setHours(0, 0, 0, 0);
+        return isNaN(d) ? null : d;
+      }
+
+      if (typeof val === 'string') {
+        const s = val.trim();
+        const brMatch = s.match(/^(\d{1,2})[\/\-\.](\d{1,2})[\/\-\.](\d{4})/);
+        if (brMatch) {
+          const d = new Date(parseInt(brMatch[3]), parseInt(brMatch[2]) - 1, parseInt(brMatch[1]));
+          d.setHours(0, 0, 0, 0);
+          return isNaN(d) ? null : d;
+        }
+
+        const isoMatch = s.match(/^(\d{4})[\/\-](\d{1,2})[\/\-](\d{1,2})/);
+        if (isoMatch) {
+          const d = new Date(parseInt(isoMatch[1]), parseInt(isoMatch[2]) - 1, parseInt(isoMatch[3]));
+          d.setHours(0, 0, 0, 0);
+          return isNaN(d) ? null : d;
+        }
+
+        const fallback = new Date(s);
+        if (!isNaN(fallback)) {
+          fallback.setHours(0, 0, 0, 0);
+          return fallback;
+        }
+      }
+
+      return null;
+    }
+
+    function formatDateDisplay(d) {
+      if (!d || !(d instanceof Date) || isNaN(d)) return '-';
+      const dia = String(d.getDate()).padStart(2, '0');
+      const mes = String(d.getMonth() + 1).padStart(2, '0');
+      const ano = d.getFullYear();
+      return `${dia}/${mes}/${ano}`;
+    }
+
+    // Processamento e Regras de Negócio
+    function processExcelData(data) {
+      rawData = data;
+      if (!data || data.length === 0) return;
+
+      originalColumns = Object.keys(data[0]);
+
+      const colStatus = originalColumns.find(c => {
+        const n = normalizeKey(c);
+        return n === 'status' || n === 'situacao' || n === 'fase';
+      });
+
+      const colPrazoAcordado = originalColumns.find(c => {
+        const n = normalizeKey(c);
+        return n.includes('acordado') || (n.includes('prazo') && !n.includes('reprogramado')) || n === 'datalimite' || n === 'vencimento';
+      });
+
+      const colPrazoReprogramado = originalColumns.find(c => {
+        const n = normalizeKey(c);
+        return n.includes('reprogramado') || n.includes('prorrogado') || n.includes('novoprazo');
+      });
+
+      const colArea = originalColumns.find(c => {
+        const n = normalizeKey(c);
+        return n === 'area' || n === 'setor' || n === 'departamento';
+      });
+
+      const colResponsavel = originalColumns.find(c => {
+        const n = normalizeKey(c);
+        return n.includes('responsavel') || n === 'dono' || n === 'owner';
+      });
+
+      const colEmail = originalColumns.find(c => {
+        const n = normalizeKey(c);
+        return n.includes('email') || n.includes('correio');
+      });
+
+      const colGestor = originalColumns.find(c => {
+        const n = normalizeKey(c);
+        return n.includes('gestor') || n.includes('gerente') || n.includes('lider') || n.includes('superior');
+      });
+
+      const colPlano = originalColumns.find(c => {
+        const n = normalizeKey(c);
+        return n.includes('plano') || n.includes('acao') || n.includes('descricao') || n.includes('titulo');
+      });
+
+      const colId = originalColumns.find(c => {
+        const n = normalizeKey(c);
+        return n === 'id' || n === 'codigo' || n === 'item' || n === 'numero';
+      });
+
+      const colRisco = originalColumns.find(c => {
+        const n = normalizeKey(c);
+        return n === 'risco' || n === 'criticidade' || n === 'nivelderisco' || n === 'prioridade';
+      });
+
+      processedData = data.map((row, index) => {
+        const statusOriginal = colStatus ? String(row[colStatus] || '').trim() : '';
+        const statusNorm = normalizeKey(statusOriginal);
+
+        const area = colArea ? String(row[colArea] || '').trim() : 'Geral';
+        const responsavel = colResponsavel ? String(row[colResponsavel] || '').trim() : 'Não atribuído';
+        const email = colEmail ? String(row[colEmail] || '').trim() : '';
+        const gestor = colGestor ? String(row[colGestor] || '').trim() : '';
+        const plano = colPlano ? String(row[colPlano] || '').trim() : `Plano de ação #${index + 1}`;
+        const itemCustomId = colId && row[colId] ? String(row[colId]).trim() : String(index + 1);
+
+        const risco = colRisco ? String(row[colRisco] || '').trim() : '';
+        const riscoNorm = normalizeKey(risco);
+
+        const dataAcordada = colPrazoAcordado ? parseDate(row[colPrazoAcordado]) : null;
+        const dataReprogramada = colPrazoReprogramado ? parseDate(row[colPrazoReprogramado]) : null;
+
+        let prazoEfetivo = null;
+        let tipoPrazoUsado = '';
+
+        if (dataReprogramada) {
+          prazoEfetivo = dataReprogramada;
+          tipoPrazoUsado = 'Reprogramado';
+        } else if (dataAcordada) {
+          prazoEfetivo = dataAcordada;
+          tipoPrazoUsado = 'Acordado';
+        }
+
+        const isConcluido = statusNorm === 'concluido' || statusNorm === 'finalizado' || statusNorm === 'concluida' || statusNorm === 'ok';
+
+        let statusCalculado = '';
+        let statusKey = '';
+        let diasAtraso = 0;
+        let diasRestantes = 9999;
+
+        if (isConcluido) {
+          statusCalculado = 'Concluído';
+          statusKey = 'CONCLUIDO';
+          diasAtraso = 0;
+          diasRestantes = 9999;
+        } else if (!prazoEfetivo) {
+          statusCalculado = 'Sem Prazo';
+          statusKey = 'NO_PRAZO';
+          diasAtraso = 0;
+          diasRestantes = 9999;
+        } else {
+          const diffMs = prazoEfetivo.getTime() - today.getTime();
+          const diffDays = Math.round(diffMs / (1000 * 60 * 60 * 24));
+          diasRestantes = diffDays;
+
+          if (diffDays < 0) {
+            statusCalculado = 'Atrasado';
+            statusKey = 'ATRASADO';
+            diasAtraso = Math.abs(diffDays);
+          } else if (diffDays >= 0 && diffDays <= 7) {
+            statusCalculado = 'Vence em 7 dias';
+            statusKey = 'VENCE_7_DIAS';
+            diasAtraso = 0;
+          } else {
+            statusCalculado = 'No prazo';
+            statusKey = 'NO_PRAZO';
+            diasAtraso = 0;
+          }
+        }
+
+        const isRiscoAlto = riscoNorm === 'alto' || riscoNorm === 'alta' || riscoNorm === 'critico' || riscoNorm === 'critica' || riscoNorm === 'high';
+
+        return {
+          id: index + 1,
+          customId: itemCustomId,
+          original: row,
+          plano,
+          statusCalculado,
+          statusKey,
+          diasAtraso,
+          diasRestantes,
+          prazoEfetivo,
+          tipoPrazoUsado,
+          area: area || 'Não informada',
+          responsavel: responsavel || 'Não atribuído',
+          email,
+          gestor,
+          risco: risco || 'Não informado',
+          riscoNorm,
+          isRiscoAlto,
+          isConcluido
+        };
+      });
+
+      // Ordenação padrão: mais atrasado primeiro
+      sortDataDescByDelay();
+
+      // Preenche os selects de filtro
+      populateFilterOptions();
+
+      // Atualiza KPIs e Gráficos
+      updateDashboardPanel();
+
+      // Renderiza Tabela
+      renderTableHeader();
+      renderTable();
+
+      // Monta a Central de Cobranças
+      buildCobrancasSection();
+
+      // Exibe componentes
+      dashboardPanel.style.display = 'grid';
+      filterPanel.style.display = 'block';
+      tableResponsive.style.display = 'block';
+      tableFooter.style.display = 'flex';
+      emptyState.style.display = 'none';
+    }
+
+    // Ordenação mais atrasados primeiro
+    function sortDataDescByDelay() {
+      currentSortColumn = 'diasAtraso';
+      currentSortDirection = 'desc';
+
+      processedData.sort((a, b) => {
+        if (b.diasAtraso !== a.diasAtraso) {
+          return b.diasAtraso - a.diasAtraso;
+        }
+
+        if (a.diasRestantes !== b.diasRestantes) {
+          return a.diasRestantes - b.diasRestantes;
+        }
+
+        if (a.isConcluido && !b.isConcluido) return 1;
+        if (!a.isConcluido && b.isConcluido) return -1;
+
+        return a.id - b.id;
+      });
+    }
+
+    // Atualiza Painel de Métricas e Gráfico
+    function updateDashboardPanel() {
+      const total = processedData.length;
+      const lateItems = processedData.filter(d => d.statusKey === 'ATRASADO');
+      const lateCount = lateItems.length;
+
+      document.getElementById('kpiTotal').textContent = total;
+      document.getElementById('kpiLate').textContent = lateCount;
+
+      const pct = total > 0 ? ((lateCount / total) * 100).toFixed(1) : 0;
+      document.getElementById('kpiLatePct').textContent = `${pct}%`;
+
+      let avgDays = 0;
+      if (lateCount > 0) {
+        const sumDelay = lateItems.reduce((acc, curr) => acc + curr.diasAtraso, 0);
+        avgDays = (sumDelay / lateCount).toFixed(1);
+      }
+      document.getElementById('kpiAvgLate').innerHTML = `${avgDays} <small style="font-size: 1rem; font-weight: 500;">dias</small>`;
+
+      renderBarChart(lateItems, lateCount);
+    }
+
+    function renderBarChart(lateItems, totalLate) {
+      const container = document.getElementById('chartBarsContainer');
+      const totalBadge = document.getElementById('chartTotalBadge');
+      container.innerHTML = '';
+
+      totalBadge.textContent = `${totalLate} ${totalLate === 1 ? 'atrasado' : 'atrasados'}`;
+
+      if (totalLate === 0) {
+        container.innerHTML = `
+          <div class="chart-empty">
+            🎉 Parabéns! Não há planos atrasados no momento.
+          </div>
+        `;
+        return;
+      }
+
+      const areaCountMap = {};
+      lateItems.forEach(item => {
+        const a = item.area || 'Outros';
+        areaCountMap[a] = (areaCountMap[a] || 0) + 1;
+      });
+
+      const sortedAreas = Object.keys(areaCountMap)
+        .map(area => ({ area, count: areaCountMap[area] }))
+        .sort((a, b) => b.count - a.count);
+
+      const maxCount = sortedAreas[0].count;
+
+      sortedAreas.forEach(item => {
+        const pctWidth = Math.max(12, Math.round((item.count / maxCount) * 100));
+
+        const row = document.createElement('div');
+        row.className = 'bar-row';
+        row.title = `Clique para filtrar pela área: ${item.area}`;
+        row.innerHTML = `
+          <span class="bar-label" title="${item.area}">${item.area}</span>
+          <div class="bar-track">
+            <div class="bar-fill" style="width: ${pctWidth}%;"></div>
+          </div>
+          <span class="bar-value">${item.count} ${item.count === 1 ? 'plano' : 'planos'}</span>
+        `;
+
+        row.addEventListener('click', () => {
+          filterArea.value = item.area;
+          filterAreaVal = item.area;
+          renderTable();
+        });
+
+        container.appendChild(row);
+      });
+    }
+
+    function populateFilterOptions() {
+      const areas = [...new Set(processedData.map(d => d.area))].filter(Boolean).sort();
+      filterArea.innerHTML = '<option value="">Todas as Áreas</option>';
+      areas.forEach(a => {
+        const opt = document.createElement('option');
+        opt.value = a;
+        opt.textContent = a;
+        filterArea.appendChild(opt);
+      });
+
+      const resp = [...new Set(processedData.map(d => d.responsavel))].filter(Boolean).sort();
+      filterResponsavel.innerHTML = '<option value="">Todos os Responsáveis</option>';
+      resp.forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r;
+        opt.textContent = r;
+        filterResponsavel.appendChild(opt);
+      });
+
+      const riscos = [...new Set(processedData.map(d => d.risco))].filter(Boolean);
+      filterRisco.innerHTML = '<option value="">Todos os Riscos</option>';
+      ['Alto', 'Médio', 'Baixo'].forEach(r => {
+        const opt = document.createElement('option');
+        opt.value = r;
+        opt.textContent = r;
+        filterRisco.appendChild(opt);
+      });
+      riscos.forEach(r => {
+        if (!['Alto', 'Médio', 'Baixo'].includes(r) && r !== 'Não informado') {
+          const opt = document.createElement('option');
+          opt.value = r;
+          opt.textContent = r;
+          filterRisco.appendChild(opt);
+        }
+      });
+    }
+
+    function renderTableHeader() {
+      tableHeaderRow.innerHTML = '';
+
+      const calculatedHeaders = [
+        { label: '#', key: 'id' },
+        { label: 'Status Calculado', key: 'statusCalculado' },
+        { label: 'Dias de Atraso ⏱️', key: 'diasAtraso' },
+        { label: 'Prazo Vigente', key: 'prazoEfetivo' }
+      ];
+
+      calculatedHeaders.forEach(col => {
+        const th = document.createElement('th');
+        th.textContent = col.label;
+        th.style.backgroundColor = '#f1f5f9';
+        th.style.fontWeight = '700';
+        th.title = 'Clique para ordenar';
+        th.addEventListener('click', () => sortTableByColumn(col.key));
+        tableHeaderRow.appendChild(th);
+      });
+
+      originalColumns.forEach(col => {
+        const th = document.createElement('th');
+        th.textContent = col;
+        th.title = 'Clique para ordenar';
+        th.addEventListener('click', () => sortTableByColumn(`orig_${col}`));
+        tableHeaderRow.appendChild(th);
+      });
+    }
+
+    function sortTableByColumn(colKey) {
+      if (currentSortColumn === colKey) {
+        currentSortDirection = currentSortDirection === 'asc' ? 'desc' : 'asc';
+      } else {
+        currentSortColumn = colKey;
+        currentSortDirection = colKey === 'diasAtraso' ? 'desc' : 'asc';
+      }
+
+      processedData.sort((a, b) => {
+        let valA, valB;
+
+        if (colKey === 'id') {
+          valA = a.id; valB = b.id;
+        } else if (colKey === 'diasAtraso') {
+          valA = a.diasAtraso; valB = b.diasAtraso;
+        } else if (colKey === 'statusCalculado') {
+          valA = a.statusCalculado; valB = b.statusCalculado;
+        } else if (colKey === 'prazoEfetivo') {
+          valA = a.prazoEfetivo ? a.prazoEfetivo.getTime() : 0;
+          valB = b.prazoEfetivo ? b.prazoEfetivo.getTime() : 0;
+        } else if (colKey.startsWith('orig_')) {
+          const col = colKey.replace('orig_', '');
+          valA = a.original[col] || '';
+          valB = b.original[col] || '';
+        }
+
+        if (typeof valA === 'number' && typeof valB === 'number') {
+          return currentSortDirection === 'asc' ? valA - valB : valB - valA;
+        }
+
+        return currentSortDirection === 'asc' 
+          ? String(valA).localeCompare(String(valB)) 
+          : String(valB).localeCompare(String(valA));
+      });
+
+      renderTable();
+    }
+
+    function renderTable() {
+      tableBody.innerHTML = '';
+
+      const filtered = processedData.filter(item => {
+        if (filterStatusVal !== 'TODOS' && item.statusKey !== filterStatusVal) {
+          return false;
+        }
+
+        if (filterAreaVal && item.area !== filterAreaVal) {
+          return false;
+        }
+
+        if (filterResponsavelVal && item.responsavel !== filterResponsavelVal) {
+          return false;
+        }
+
+        if (filterRiscoVal) {
+          const fNorm = normalizeKey(filterRiscoVal);
+          if (item.riscoNorm !== fNorm && !item.risco.toLowerCase().includes(filterRiscoVal.toLowerCase())) {
+            return false;
+          }
+        }
+
+        if (searchTerm) {
+          const matchCalculated = item.statusCalculado.toLowerCase().includes(searchTerm) ||
+                                  String(item.diasAtraso).includes(searchTerm) ||
+                                  item.area.toLowerCase().includes(searchTerm) ||
+                                  item.responsavel.toLowerCase().includes(searchTerm) ||
+                                  item.risco.toLowerCase().includes(searchTerm);
+          if (matchCalculated) return true;
+
+          return Object.values(item.original).some(val => 
+            String(val).toLowerCase().includes(searchTerm)
+          );
+        }
+
+        return true;
+      });
+
+      footerCount.textContent = `Exibindo ${filtered.length} de ${processedData.length} planos`;
+
+      if (filtered.length === 0) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = originalColumns.length + 4;
+        td.style.textAlign = 'center';
+        td.style.padding = '36px';
+        td.style.color = '#94a3b8';
+        td.textContent = 'Nenhum plano corresponde aos filtros aplicados.';
+        tr.appendChild(td);
+        tableBody.appendChild(tr);
+        return;
+      }
+
+      filtered.forEach(item => {
+        const tr = document.createElement('tr');
+
+        const isLateHighRisk = (item.statusKey === 'ATRASADO') && item.isRiscoAlto;
+        if (isLateHighRisk) {
+          tr.classList.add('danger-high-risk');
+        }
+
+        const tdId = document.createElement('td');
+        tdId.textContent = item.id;
+        tdId.style.fontWeight = '700';
+        tr.appendChild(tdId);
+
+        const tdStatus = document.createElement('td');
+        const badge = document.createElement('span');
+        badge.className = 'badge';
+
+        if (item.statusKey === 'CONCLUIDO') {
+          badge.classList.add('badge-concluido');
+          badge.innerHTML = `✓ ${item.statusCalculado}`;
+        } else if (item.statusKey === 'ATRASADO') {
+          badge.classList.add('badge-atrasado');
+          badge.innerHTML = isLateHighRisk ? `🚨 ${item.statusCalculado}` : `⚠️ ${item.statusCalculado}`;
+        } else if (item.statusKey === 'VENCE_7_DIAS') {
+          badge.classList.add('badge-vence-7');
+          badge.innerHTML = `⏳ ${item.statusCalculado}`;
+        } else if (item.statusKey === 'NO_PRAZO') {
+          badge.classList.add('badge-no-prazo');
+          badge.innerHTML = `⏱️ ${item.statusCalculado}`;
+        } else {
+          badge.classList.add('badge-neutro');
+          badge.textContent = item.statusCalculado;
+        }
+        tdStatus.appendChild(badge);
+        tr.appendChild(tdStatus);
+
+        const tdDelay = document.createElement('td');
+        const delayBadge = document.createElement('span');
+        delayBadge.className = 'badge-delay';
+
+        if (item.diasAtraso > 0) {
+          delayBadge.classList.add('late');
+          if (isLateHighRisk) {
+            delayBadge.style.backgroundColor = '#dc2626';
+            delayBadge.style.color = '#ffffff';
+          }
+          delayBadge.textContent = `${item.diasAtraso} ${item.diasAtraso === 1 ? 'dia' : 'dias'}`;
+        } else {
+          delayBadge.classList.add('none');
+          delayBadge.textContent = '-';
+        }
+        tdDelay.appendChild(delayBadge);
+        tr.appendChild(tdDelay);
+
+        const tdPrazo = document.createElement('td');
+        if (item.prazoEfetivo) {
+          tdPrazo.innerHTML = `<strong>${formatDateDisplay(item.prazoEfetivo)}</strong>`;
+          if (item.tipoPrazoUsado === 'Reprogramado') {
+            tdPrazo.innerHTML += `<span class="prazo-tag" title="Usando prazo reprogramado">Reprog.</span>`;
+          }
+        } else {
+          tdPrazo.textContent = '-';
+        }
+        tr.appendChild(tdPrazo);
+
+        originalColumns.forEach(col => {
+          const tdCol = document.createElement('td');
+          const val = item.original[col];
+          const colNorm = normalizeKey(col);
+
+          if (colNorm === 'risco' || colNorm === 'criticidade') {
+            const rNorm = normalizeKey(val);
+            const riskBadge = document.createElement('span');
+            riskBadge.className = 'badge-risk';
+
+            if (rNorm === 'alto' || rNorm === 'alta' || rNorm === 'critico' || rNorm === 'critica' || rNorm === 'high') {
+              riskBadge.classList.add('badge-risk-alto');
+              riskBadge.innerHTML = `🔥 ${val}`;
+            } else if (rNorm === 'medio' || rNorm === 'media' || rNorm === 'moderado') {
+              riskBadge.classList.add('badge-risk-medio');
+              riskBadge.textContent = val;
+            } else {
+              riskBadge.classList.add('badge-risk-baixo');
+              riskBadge.textContent = val || '-';
+            }
+            tdCol.appendChild(riskBadge);
+          } else if (val instanceof Date) {
+            tdCol.textContent = formatDateDisplay(val);
+          } else {
+            tdCol.textContent = (val !== null && val !== undefined && val !== "") ? val : '-';
+          }
+
+          tr.appendChild(tdCol);
+        });
+
+        tableBody.appendChild(tr);
+      });
+    }
+
+    function exportCurrentTableToExcel() {
+      if (!processedData || processedData.length === 0) {
+        alert('Nenhum dado para exportar.');
+        return;
+      }
+
+      const exportRows = processedData.map(item => {
+        const row = {
+          'ID': item.id,
+          'Status Calculado': item.statusCalculado,
+          'Dias de Atraso': item.diasAtraso,
+          'Prazo Vigente': formatDateDisplay(item.prazoEfetivo),
+          'Tipo de Prazo': item.tipoPrazoUsado || 'Acordado'
+        };
+
+        originalColumns.forEach(c => {
+          const val = item.original[c];
+          row[c] = (val instanceof Date) ? formatDateDisplay(val) : val;
+        });
+
+        return row;
+      });
+
+      const ws = XLSX.utils.json_to_sheet(exportRows);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, "Follow-up");
+
+      const fileName = `follow_up_calculado_${today.toISOString().split('T')[0]}.xlsx`;
+      XLSX.writeFile(wb, fileName);
+    }
+
+    // ====================================================
+    // LÓGICA E CONSTRUÇÃO DA ABA "COBRANÇAS"
+    // ====================================================
+    function buildCobrancasSection() {
+      cobrancasCardsContainer.innerHTML = '';
+
+      // Filtra planos pendentes de cobrança: Atrasados OU Vencem em 7 dias
+      const pendencias = processedData.filter(item => 
+        item.statusKey === 'ATRASADO' || item.statusKey === 'VENCE_7_DIAS'
+      );
+
+      // Agrupa por responsável
+      const grupos = {};
+      pendencias.forEach(item => {
+        const resp = item.responsavel || 'Não atribuído';
+        if (!grupos[resp]) {
+          grupos[resp] = {
+            responsavel: resp,
+            area: item.area || 'Geral',
+            email: item.email || generateEmailFromName(resp),
+            gestor: item.gestor || '',
+            itens: []
+          };
+        }
+        grupos[resp].itens.push(item);
+      });
+
+      const listaResponsaveis = Object.values(grupos);
+
+      // Atualiza badge de contagem na aba
+      if (listaResponsaveis.length > 0) {
+        cobrancasCountBadge.textContent = listaResponsaveis.length;
+        cobrancasCountBadge.style.display = 'inline-block';
+        cobrancasEmptyState.style.display = 'none';
+      } else {
+        cobrancasCountBadge.style.display = 'none';
+        cobrancasEmptyState.style.display = 'block';
+        return;
+      }
+
+      // Ordena: primeiro quem tem planos escalonados, depois por quantidade de pendências
+      listaResponsaveis.sort((a, b) => {
+        const escA = checkEscalonamento(a.itens);
+        const escB = checkEscalonamento(b.itens);
+        if (escA !== escB) return escB ? 1 : -1;
+        return b.itens.length - a.itens.length;
+      });
+
+      // Cria um card de e-mail por responsável
+      listaResponsaveis.forEach((grupo, idx) => {
+        const card = createEmailCard(grupo, idx + 1);
+        cobrancasCardsContainer.appendChild(card);
+      });
+    }
+
+    // Regra de escalonamento: mais de 60 dias de atraso OU risco Alto atrasado
+    function checkEscalonamento(itens) {
+      return itens.some(item => 
+        (item.statusKey === 'ATRASADO' && item.diasAtraso > 60) || 
+        (item.statusKey === 'ATRASADO' && item.isRiscoAlto)
+      );
+    }
+
+    function extractFirstName(fullName) {
+      if (!fullName) return 'Prezado(a)';
+      const clean = fullName.trim();
+      const parts = clean.split(/\s+/);
+      return parts[0] || clean;
+    }
+
+    function generateEmailFromName(name) {
+      if (!name || name === 'Não atribuído') return 'responsavel@empresa.com';
+      const clean = name.toLowerCase()
+        .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9\s]/g, "").trim().split(/\s+/);
+      if (partsLength(clean) >= 2) {
+        return `${clean[0]}.${clean[clean.length - 1]}@empresa.com`;
+      }
+      return `${clean[0]}@empresa.com`;
+    }
+
+    function partsLength(arr) { return arr.length; }
+
+    function getInitials(name) {
+      if (!name) return '??';
+      const parts = name.trim().split(/\s+/);
+      if (parts.length >= 2) {
+        return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+      }
+      return parts[0].slice(0, 2).toUpperCase();
+    }
+
+    // Gera o card de e-mail completo
+    function createEmailCard(grupo, index) {
+      const { responsavel, area, email, gestor, itens } = grupo;
+      const firstName = extractFirstName(responsavel);
+      const isEscalonado = checkEscalonamento(itens);
+
+      // Email do Gestor se escalonado
+      let gestorEmail = gestor;
+      if (!gestorEmail) {
+        gestorEmail = isEscalonado ? `gestao.${normalizeKey(area || 'diretoria')}@empresa.com` : '';
+      }
+
+      const card = document.createElement('div');
+      card.className = `email-card ${isEscalonado ? 'escalonado' : ''}`;
+
+      // Monta lista de texto formatado dos planos para o e-mail
+      let planosText = '';
+      itens.forEach(item => {
+        const prazoFormatado = formatDateDisplay(item.prazoEfetivo);
+        const tipoPrazo = item.tipoPrazoUsado ? ` (${item.tipoPrazoUsado})` : '';
+        let situacaoText = '';
+
+        if (item.statusKey === 'ATRASADO') {
+          situacaoText = `Atrasado há ${item.diasAtraso} ${item.diasAtraso === 1 ? 'dia' : 'dias'}`;
+        } else if (item.statusKey === 'VENCE_7_DIAS') {
+          situacaoText = `Vence em ${item.diasRestantes} ${item.diasRestantes === 1 ? 'dia' : 'dias'}`;
+        } else {
+          situacaoText = item.statusCalculado;
+        }
+
+        const riscoText = item.risco && item.risco !== 'Não informado' ? ` | Risco: ${item.risco}` : '';
+
+        planosText += `• [ID ${item.customId}] ${item.plano}\n`;
+        planosText += `   - Prazo: ${prazoFormatado}${tipoPrazo}\n`;
+        planosText += `   - Situação: ${situacaoText}${riscoText}\n\n`;
+      });
+
+      const assunto = "Follow-up de planos de ação – Auditoria Interna";
+
+      // Texto do e-mail de acordo com a regra de escalonamento
+      let corpoEmail = '';
+
+      if (isEscalonado) {
+        // Tom mais firme com gestão em cópia
+        corpoEmail = 
+`Olá, ${firstName},
+
+Realizamos o monitoramento periódico dos planos de ação sob sua responsabilidade e identificamos pendências que requerem atenção prioritária e imediata, com plano(s) em atraso expressivo (>60 dias) e/ou classificado(s) como Risco Alto:
+
+${planosText}Diante da criticidade e do impacto aos controles internos da organização, incluímos a gestão imediata em cópia para acompanhamento.
+
+Solicitamos impreterivelmente o envio da atualização do status e das respectivas evidências de implementação até o dia ${formattedDeadlineShort} (prazo de 5 dias úteis a partir de hoje).
+
+Caso haja algum impedimento formal ou necessidade de revisão de cronograma, pedimos que retorne este e-mail justificando a situação para alinhamento conjunto.
+
+Aguardamos seu retorno tempestivo.
+
+Atenciosamente,
+Equipe de Auditoria Interna & Controles`;
+      } else {
+        // Tom cordial e profissional
+        corpoEmail = 
+`Olá, ${firstName}, tudo bem?
+
+Escrevemos para realizar o acompanhamento periódico dos planos de ação sob sua responsabilidade junto à Auditoria Interna.
+
+Identificamos os seguintes itens que demandam sua atenção (atrasados ou com vencimento nos próximos 7 dias):
+
+${planosText}Gostaríamos de solicitar a gentileza de nos enviar a atualização do status e as respectivas evidências de implementação até o dia ${formattedDeadlineShort} (prazo de 5 dias úteis a partir de hoje).
+
+Caso o plano já tenha sido concluído, por favor responda a esta mensagem anexando a documentação comprobatória. Se precisar de esclarecimentos ou apoio no alinhamento de prazos, estamos à disposição.
+
+Agradecemos desde já pela colaboração e parceria de sempre.
+
+Atenciosamente,
+Equipe de Auditoria Interna & Controles`;
+      }
+
+      // Monta tabela visual rápida dos planos dentro do card
+      let miniTableRows = '';
+      itens.forEach(item => {
+        const prazo = formatDateDisplay(item.prazoEfetivo);
+        let badgeSituacao = '';
+        if (item.statusKey === 'ATRASADO') {
+          badgeSituacao = `<span class="badge badge-atrasado" style="font-size: 0.7rem;">⚠️ Atrasado (${item.diasAtraso}d)</span>`;
+        } else {
+          badgeSituacao = `<span class="badge badge-vence-7" style="font-size: 0.7rem;">⏳ Vence em ${item.diasRestantes}d</span>`;
+        }
+
+        const badgeRisco = item.isRiscoAlto 
+          ? `<span class="badge-risk badge-risk-alto" style="font-size: 0.65rem;">🔥 Alto</span>` 
+          : `<span class="badge-risk badge-risk-baixo" style="font-size: 0.65rem;">${item.risco}</span>`;
+
+        miniTableRows += `
+          <tr>
+            <td><strong>#${item.customId}</strong></td>
+            <td>${item.plano}</td>
+            <td>${prazo}</td>
+            <td>${badgeSituacao}</td>
+            <td>${badgeRisco}</td>
+          </tr>
+        `;
+      });
+
+      card.innerHTML = `
+        <div class="email-card-header">
+          <div class="person-info">
+            <div class="person-avatar">${getInitials(responsavel)}</div>
+            <div class="person-details">
+              <h3>${responsavel}</h3>
+              <p>Área: <strong>${area}</strong> • ${itens.length} ${itens.length === 1 ? 'plano pendente' : 'planos pendentes'}</p>
+            </div>
+          </div>
+          <div class="card-tags">
+            ${isEscalonado 
+              ? `<span class="escalonado-tag">🚨 Escalonado (Gestor em Cópia)</span>` 
+              : `<span class="cordial-tag">🤝 Tom Cordial & Profissional</span>`}
+          </div>
+        </div>
+
+        <div class="email-card-body">
+          <div class="email-meta-grid">
+            <span class="email-meta-label">Para:</span>
+            <span class="email-meta-value">${email}</span>
+
+            ${isEscalonado ? `
+              <span class="email-meta-label">Cc (Gestor):</span>
+              <span class="email-meta-value" style="color: #b91c1c; font-weight: 600;">${gestorEmail}</span>
+            ` : ''}
+
+            <span class="email-meta-label">Assunto:</span>
+            <span class="email-meta-value"><strong>${assunto}</strong></span>
+          </div>
+
+          <div>
+            <div style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 6px;">
+              Planos incluídos nesta cobrança:
+            </div>
+            <div style="overflow-x: auto; background: #ffffff; border: 1px solid var(--border-color); border-radius: 8px;">
+              <table class="plans-mini-table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Plano de Ação</th>
+                    <th>Prazo</th>
+                    <th>Situação</th>
+                    <th>Risco</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${miniTableRows}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div>
+            <div style="font-size: 0.75rem; font-weight: 700; color: #64748b; text-transform: uppercase; margin-bottom: 6px;">
+              Corpo do E-mail:
+            </div>
+            <div class="email-preview-box" id="emailBody_${index}">${escapeHtml(corpoEmail)}</div>
+          </div>
+        </div>
+
+        <div class="email-card-footer">
+          <span class="toast-msg" id="toast_${index}">Copiado para a área de transferência! ✓</span>
+          <button class="btn btn-outline" id="btnCopy_${index}">
+            📋 Copiar E-mail
+          </button>
+          <a class="btn btn-primary" id="btnOutlook_${index}" href="#">
+            ✉️ Abrir no Outlook
+          </a>
+        </div>
+      `;
+
+      // Evento de Copiar E-mail
+      const btnCopy = card.querySelector(`#btnCopy_${index}`);
+      const toast = card.querySelector(`#toast_${index}`);
+      btnCopy.addEventListener('click', () => {
+        navigator.clipboard.writeText(corpoEmail).then(() => {
+          toast.classList.add('show');
+          setTimeout(() => toast.classList.remove('show'), 2500);
+        }).catch(err => {
+          alert('Erro ao copiar: ' + err);
+        });
+      });
+
+      // Link mailto para abrir diretamente no Outlook
+      const btnOutlook = card.querySelector(`#btnOutlook_${index}`);
+      let mailtoUrl = `mailto:${encodeURIComponent(email)}?subject=${encodeURIComponent(assunto)}`;
+      if (isEscalonado && gestorEmail) {
+        mailtoUrl += `&cc=${encodeURIComponent(gestorEmail)}`;
+      }
+      mailtoUrl += `&body=${encodeURIComponent(corpoEmail)}`;
+      btnOutlook.href = mailtoUrl;
+
+      return card;
+    }
+
+    function escapeHtml(text) {
+      const map = {
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+      };
+      return text.replace(/[&<>"']/g, m => map[m]);
+    }
+
+    // Dados de Demonstração
+    function loadSampleData() {
+      function addDays(d, days) {
+        const copy = new Date(d);
+        copy.setDate(copy.getDate() + days);
+        return copy;
+      }
+
+      loadedFileName.textContent = `Dados de Demonstração (Referência de Hoje: ${formatDateDisplay(today)})`;
+
+      const demoData = [
+        {
+          "ID": 1,
+          "Plano de Ação": "Revisar conciliação bancária e tesouraria",
+          "Responsável": "Carlos Eduardo",
+          "Email": "carlos.eduardo@empresa.com",
+          "Gestor": "marcelo.diretoria@empresa.com",
+          "Área": "Financeiro",
+          "Risco": "Alto",
+          "Status": "Em andamento",
+          "Prazo acordado": formatDateDisplay(addDays(today, -75)),
+          "Prazo reprogramado": "",
+          "Observações": "Atraso > 60 dias e Risco Alto (Escalonado)"
+        },
+        {
+          "ID": 2,
+          "Plano de Ação": "Implantar aprovação digital de compras",
+          "Responsável": "Juliana Santos",
+          "Email": "juliana.santos@empresa.com",
+          "Gestor": "fernando.cio@empresa.com",
+          "Área": "TI",
+          "Risco": "Alto",
+          "Status": "Em andamento",
+          "Prazo acordado": formatDateDisplay(addDays(today, -30)),
+          "Prazo reprogramado": formatDateDisplay(addDays(today, -14)),
+          "Observações": "Risco Alto atrasado (Escalonado)"
+        },
+        {
+          "ID": 3,
+          "Plano de Ação": "Adequar contingência do datacenter",
+          "Responsável": "Juliana Santos",
+          "Email": "juliana.santos@empresa.com",
+          "Gestor": "fernando.cio@empresa.com",
+          "Área": "TI",
+          "Risco": "Alto",
+          "Status": "Em andamento",
+          "Prazo acordado": formatDateDisplay(addDays(today, -10)),
+          "Prazo reprogramado": "",
+          "Observações": "Infraestrutura crítica atrasada (Escalonado)"
+        },
+        {
+          "ID": 4,
+          "Plano de Ação": "Recálculo das provisões trabalhistas",
+          "Responsável": "Ricardo Mendes",
+          "Email": "ricardo.mendes@empresa.com",
+          "Gestor": "marcelo.diretoria@empresa.com",
+          "Área": "Controladoria",
+          "Risco": "Médio",
+          "Status": "Em andamento",
+          "Prazo acordado": formatDateDisplay(addDays(today, -6)),
+          "Prazo reprogramado": "",
+          "Observações": "Atrasado de Risco Médio (Cordial)"
+        },
+        {
+          "ID": 5,
+          "Plano de Ação": "Atualizar catálogo de materiais de consumo",
+          "Responsável": "Ana Beatriz",
+          "Email": "ana.beatriz@empresa.com",
+          "Gestor": "patricia.rh@empresa.com",
+          "Área": "RH / Suprimentos",
+          "Risco": "Baixo",
+          "Status": "Não iniciado",
+          "Prazo acordado": formatDateDisplay(addDays(today, -3)),
+          "Prazo reprogramado": "",
+          "Observações": "Atrasado de Risco Baixo (Cordial)"
+        },
+        {
+          "ID": 6,
+          "Plano de Ação": "Treinamento obrigatório da equipe de compras",
+          "Responsável": "Ana Beatriz",
+          "Email": "ana.beatriz@empresa.com",
+          "Gestor": "patricia.rh@empresa.com",
+          "Área": "RH / Suprimentos",
+          "Risco": "Médio",
+          "Status": "Não iniciado",
+          "Prazo acordado": formatDateDisplay(addDays(today, 5)),
+          "Prazo reprogramado": "",
+          "Observações": "Vence em 5 dias (Cordial)"
+        },
+        {
+          "ID": 7,
+          "Plano de Ação": "Revisão de acessos privilegiados ao ERP",
+          "Responsável": "Marcos Ribeiro",
+          "Email": "marcos.ribeiro@empresa.com",
+          "Gestor": "fernando.cio@empresa.com",
+          "Área": "Segurança",
+          "Risco": "Alto",
+          "Status": "Em andamento",
+          "Prazo acordado": formatDateDisplay(addDays(today, 3)),
+          "Prazo reprogramado": "",
+          "Observações": "Vence em 3 dias - No prazo (Cordial)"
+        },
+        {
+          "ID": 8,
+          "Plano de Ação": "Inventário físico semestral do almoxarifado",
+          "Responsável": "Roberto Alves",
+          "Email": "roberto.alves@empresa.com",
+          "Gestor": "marcelo.diretoria@empresa.com",
+          "Área": "Logística",
+          "Risco": "Médio",
+          "Status": "Em andamento",
+          "Prazo acordado": formatDateDisplay(addDays(today, 22)),
+          "Prazo reprogramado": "",
+          "Observações": "No prazo regular (Sem cobrança)"
+        },
+        {
+          "ID": 9,
+          "Plano de Ação": "Renegociação de contratos de telefonia",
+          "Responsável": "Fernanda Lima",
+          "Email": "fernanda.lima@empresa.com",
+          "Gestor": "patricia.rh@empresa.com",
+          "Área": "Facilities",
+          "Risco": "Baixo",
+          "Status": "Concluído",
+          "Prazo acordado": formatDateDisplay(addDays(today, -15)),
+          "Prazo reprogramado": "",
+          "Observações": "Concluído com sucesso (Sem cobrança)"
+        }
+      ];
+
+      processExcelData(demoData);
+    }
+  </script>
+</body>
+</html>
