@@ -93,6 +93,13 @@ Veja o que mudou em cada versão em [NOVIDADES.md](NOVIDADES.md).
 
 O Follow-up de Planos de Ação foi criado por **Jefferson Cavalcante**, auditor e instrutor de IA aplicada à auditoria interna, à frente do **Auditor do Futuro**. A ferramenta é gratuita: use e compartilhe com o seu time.
 
+### Acesse pelo celular
+
+| Mentoria anual | Treinamentos | LinkedIn |
+|---|---|---|
+| <img src="docs/img/qr-mentoria.png" width="150" alt="QR Code: mentoria"> | <img src="docs/img/qr-treinamentos.png" width="150" alt="QR Code: treinamentos"> | <img src="docs/img/qr-linkedin.png" width="150" alt="QR Code: LinkedIn"> |
+| [aiauditor.com.br/mentoria](https://aiauditor.com.br/mentoria/) | [aiauditor.com.br/cursos](https://aiauditor.com.br/cursos/) | [linkedin.com/in/jefferson-pereira](https://www.linkedin.com/in/jefferson-pereira/) |
+
 ### Treinamentos, mentoria e conteúdo
 
 | O que é | Para quem | Link |

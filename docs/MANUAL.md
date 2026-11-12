@@ -2,7 +2,7 @@
 
 # Manual de instalação e uso
 
-**Follow-up de Planos de Ação — versão 2.1**
+**Follow-up de Planos de Ação — versão 2.2**
 
 Criado por **Jefferson Cavalcante** · [Auditor do Futuro](https://aiauditor.com.br/)
 
@@ -415,16 +415,26 @@ O Follow-up de Planos de Ação foi criado por **Jefferson Cavalcante**, auditor
 
 ### Onde encontrar dentro do sistema
 
-![Marca Auditor do Futuro no topo e cartão do criador no rodapé](img/09-marca-no-sistema.png)
+![Marca Auditor do Futuro no topo, faixa de mentoria e treinamentos e cartão do criador no rodapé](img/09-marca-no-sistema.png)
 
 1. Marca no topo da tela, ao lado do nome do sistema.
-2. Cartão **Criado por Auditor do Futuro**, no rodapé.
+2. Faixa com os botões da mentoria, dos treinamentos e do LinkedIn, e o QR Code da mentoria.
+3. Cartão **Criado por Auditor do Futuro**, no rodapé.
 
-Clicar em qualquer um dos dois abre a janela com os treinamentos, a mentoria e os canais de contato.
+Clicar na marca do topo ou no cartão do rodapé abre a janela com os treinamentos, a mentoria, os QR Codes e os canais de contato.
 
 ![Janela Sobre, com treinamentos, mentoria, soluções para times e contato](img/08-sobre.png)
 
 A marca aparece só na tela do sistema. Os e-mails de cobrança, a planilha exportada, o modelo e a impressão saem sem ela, porque são documentos seus.
+
+### Acesse pelo celular
+
+Aponte a câmera do celular para um dos códigos.
+
+| Mentoria anual | Treinamentos | LinkedIn |
+|---|---|---|
+| <img src="img/qr-mentoria.png" width="150" alt="QR Code: mentoria"> | <img src="img/qr-treinamentos.png" width="150" alt="QR Code: treinamentos"> | <img src="img/qr-linkedin.png" width="150" alt="QR Code: LinkedIn"> |
+| [aiauditor.com.br/mentoria](https://aiauditor.com.br/mentoria/) | [aiauditor.com.br/cursos](https://aiauditor.com.br/cursos/) | [linkedin.com/in/jefferson-pereira](https://www.linkedin.com/in/jefferson-pereira/) |
 
 ### Treinamentos, mentoria e conteúdo
 

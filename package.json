@@ -1,6 +1,6 @@
 {
   "name": "follow-up-planos-de-acao",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "private": true,
   "description": "Follow-up de planos de ação de auditoria interna. Abre direto no navegador; este arquivo existe só para rodar os testes.",
   "type": "commonjs",

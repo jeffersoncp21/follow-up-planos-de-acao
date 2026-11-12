@@ -1,5 +1,12 @@
 # Novidades
 
+## Versão 2.2
+
+- **Faixa de divulgação no fim da tela**, com botões para a mentoria, os treinamentos e o LinkedIn, e o QR Code da mentoria.
+- **QR Codes** da mentoria e dos treinamentos na janela "Sobre", e também no manual e no README (com o do LinkedIn).
+- Os QR Codes são desenhados na própria página. O sistema continua sem carregar nada da internet.
+- A faixa aparece só na tela. E-mails, planilha exportada, modelo e impressão continuam sem marca.
+
 ## Versão 2.1
 
 - **Marca Auditor do Futuro no sistema:** símbolo no topo, cartão "Criado por" no rodapé e janela "Sobre", com treinamentos, mentoria e contato.
