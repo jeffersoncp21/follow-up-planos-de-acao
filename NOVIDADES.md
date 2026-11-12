@@ -1,5 +1,12 @@
 # Novidades
 
+## Versão 2.1
+
+- **Marca Auditor do Futuro no sistema:** símbolo no topo, cartão "Criado por" no rodapé e janela "Sobre", com treinamentos, mentoria e contato.
+- **Manual com a identidade da marca** e uma seção final "Quem criou". O README ganhou a mesma seção.
+- **O que não mudou de propósito:** os e-mails de cobrança, a planilha exportada, o modelo e a impressão continuam sem marca, porque são documentos de quem usa o sistema.
+- A fonte da marca vem embutida na pasta `vendor/fonts`. O sistema continua sem carregar nada da internet. Os links da janela "Sobre" abrem sites externos só quando você clica.
+
 ## Versão 2.0
 
 ### O que muda no dia a dia

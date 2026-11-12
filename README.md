@@ -1,4 +1,8 @@
+<p align="center"><img src="docs/img/logo-af.png" width="84" alt="Auditor do Futuro"></p>
+
 # Follow-up de Planos de Ação
+
+Criado por **Jefferson Cavalcante** · [Auditor do Futuro](https://aiauditor.com.br/)
 
 Sistema para a Auditoria Interna acompanhar planos de ação: lê a planilha de planos, calcula atrasos, monta os e-mails de cobrança por responsável e registra quem já foi cobrado.
 
@@ -52,7 +56,7 @@ Todos esses números, a assinatura, o assunto do e-mail e as palavras que signif
 ## Dados e privacidade
 
 - A planilha é lida dentro do navegador e fica só na memória. Ao fechar a página, some.
-- O sistema não faz nenhuma conexão com a internet. O leitor de Excel está embutido na pasta `vendor`.
+- O sistema não faz nenhuma conexão com a internet por conta própria. O leitor de Excel e a fonte da marca estão embutidos na pasta `vendor`. Os links da janela "Sobre" abrem sites externos só quando você clica.
 - Ficam gravados no navegador (armazenamento local) apenas:
   - as configurações (assinatura, assunto, prazos, feriados, palavras de status);
   - o registro de cobranças: um código por plano e as datas das cobranças. Não há nomes, e-mails nem textos dos planos.
@@ -73,7 +77,7 @@ Todos esses números, a assinatura, o assunto do e-mail e as palavras que signif
 index.html        tela e estilos
 js/logica.js      regras de negócio (datas, status, colunas, e-mails, exportação)
 js/app.js         leitura do arquivo, tela e cliques
-vendor/           leitor de Excel (SheetJS 0.18.5, licença Apache 2.0)
+vendor/           leitor de Excel (SheetJS 0.18.5, licença Apache 2.0) e fonte Unbounded (licença OFL)
 tests/            testes automáticos das regras
 ```
 
@@ -84,3 +88,25 @@ node --test
 ```
 
 Veja o que mudou em cada versão em [NOVIDADES.md](NOVIDADES.md).
+
+## Quem criou
+
+O Follow-up de Planos de Ação foi criado por **Jefferson Cavalcante**, auditor e instrutor de IA aplicada à auditoria interna, à frente do **Auditor do Futuro**. A ferramenta é gratuita: use e compartilhe com o seu time.
+
+### Treinamentos, mentoria e conteúdo
+
+| O que é | Para quem | Link |
+|---|---|---|
+| Treinamentos | Quem quer aplicar Claude e Copilot na auditoria interna | [aiauditor.com.br/cursos](https://aiauditor.com.br/cursos/) |
+| Mentoria anual | Auditores que querem acompanhamento individual | [aiauditor.com.br/mentoria](https://aiauditor.com.br/mentoria/) |
+| Soluções para times | Áreas de auditoria: Método 3X, implantação e in company | [aiauditor.com.br/solucoes](https://aiauditor.com.br/solucoes/) |
+| Ebook: Método 3X | Quem quer começar lendo | [ebook.aiauditor.com.br](https://ebook.aiauditor.com.br/) |
+| Diagnóstico gratuito | Quem quer avaliar a auditoria antes de colocar IA | [aiauditor.com.br/diagnostico](https://aiauditor.com.br/diagnostico/) |
+
+### Contato e redes
+
+| Canal | Endereço |
+|---|---|
+| LinkedIn | [linkedin.com/in/jefferson-pereira](https://www.linkedin.com/in/jefferson-pereira/) |
+| Site e contato por WhatsApp | [aiauditor.com.br/jefferson](https://aiauditor.com.br/jefferson/) |
+| Código e novidades da ferramenta | [github.com/jeffersoncp21/follow-up-planos-de-acao](https://github.com/jeffersoncp21/follow-up-planos-de-acao) |

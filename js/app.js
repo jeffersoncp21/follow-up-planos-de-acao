@@ -854,6 +854,11 @@
       reprocessar();
     });
 
+    // Sobre / Criado por
+    document.querySelectorAll('[data-sobre]').forEach(b => b.addEventListener('click', () => $('aboutDialog').showModal()));
+    $('btnAboutClose').addEventListener('click', () => $('aboutDialog').close());
+    $('aboutDialog').addEventListener('click', e => { if (e.target === $('aboutDialog')) $('aboutDialog').close(); });
+
     // Se a página ficar aberta de um dia para o outro, recalcula ao voltar.
     document.addEventListener('visibilitychange', () => {
       if (!document.hidden && F.hoje().getTime() !== state.today.getTime()) reprocessar();

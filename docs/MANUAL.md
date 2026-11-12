@@ -1,6 +1,10 @@
+<p align="center"><img src="img/logo-af.png" width="84" alt="Auditor do Futuro"></p>
+
 # Manual de instalação e uso
 
-**Follow-up de Planos de Ação — versão 2.0**
+**Follow-up de Planos de Ação — versão 2.1**
+
+Criado por **Jefferson Cavalcante** · [Auditor do Futuro](https://aiauditor.com.br/)
 
 Este manual é para quem vai instalar o sistema do zero e usá-lo no dia a dia. Não é preciso saber programar.
 
@@ -15,6 +19,7 @@ Este manual é para quem vai instalar o sistema do zero e usá-lo no dia a dia. 
 7. [Problemas comuns](#7-problemas-comuns)
 8. [Dados e privacidade](#8-dados-e-privacidade)
 9. [Atualizar para uma versão nova](#9-atualizar-para-uma-versão-nova)
+10. [Quem criou](#10-quem-criou)
 
 ## 1. O que é o sistema
 
@@ -385,6 +390,7 @@ Os dados só saem da tela quando você aciona:
 - **Abrir no programa de e-mail:** o texto vai para o seu programa de e-mail.
 - **Exportar** e **Baixar modelo:** um arquivo é salvo no seu computador.
 - **Imprimir / PDF:** a tela vai para a impressora ou para um arquivo.
+- **Links da janela "Sobre":** abrem sites externos no navegador, só quando você clica. Nenhum dado da planilha vai junto.
 
 ### Cuidados que dependem de você
 
@@ -402,3 +408,40 @@ Os dados só saem da tela quando você aciona:
 5. Confira as Configurações. Se a pasta nova estiver em outro local, o navegador pode tratá-la como um sistema novo e começar com as configurações padrão.
 
 O que mudou em cada versão está em [NOVIDADES.md](../NOVIDADES.md).
+
+## 10. Quem criou
+
+O Follow-up de Planos de Ação foi criado por **Jefferson Cavalcante**, auditor e instrutor de IA aplicada à auditoria interna, à frente do **Auditor do Futuro**. A ferramenta é gratuita: use e compartilhe com o seu time.
+
+### Onde encontrar dentro do sistema
+
+![Marca Auditor do Futuro no topo e cartão do criador no rodapé](img/09-marca-no-sistema.png)
+
+1. Marca no topo da tela, ao lado do nome do sistema.
+2. Cartão **Criado por Auditor do Futuro**, no rodapé.
+
+Clicar em qualquer um dos dois abre a janela com os treinamentos, a mentoria e os canais de contato.
+
+![Janela Sobre, com treinamentos, mentoria, soluções para times e contato](img/08-sobre.png)
+
+A marca aparece só na tela do sistema. Os e-mails de cobrança, a planilha exportada, o modelo e a impressão saem sem ela, porque são documentos seus.
+
+### Treinamentos, mentoria e conteúdo
+
+| O que é | Para quem | Link |
+|---|---|---|
+| Treinamentos | Quem quer aplicar Claude e Copilot na auditoria interna | [aiauditor.com.br/cursos](https://aiauditor.com.br/cursos/) |
+| Mentoria anual | Auditores que querem acompanhamento individual | [aiauditor.com.br/mentoria](https://aiauditor.com.br/mentoria/) |
+| Soluções para times | Áreas de auditoria: Método 3X, implantação e in company | [aiauditor.com.br/solucoes](https://aiauditor.com.br/solucoes/) |
+| Ebook: Método 3X | Quem quer começar lendo | [ebook.aiauditor.com.br](https://ebook.aiauditor.com.br/) |
+| Diagnóstico gratuito | Quem quer avaliar a auditoria antes de colocar IA | [aiauditor.com.br/diagnostico](https://aiauditor.com.br/diagnostico/) |
+
+### Contato e redes
+
+| Canal | Endereço |
+|---|---|
+| LinkedIn | [linkedin.com/in/jefferson-pereira](https://www.linkedin.com/in/jefferson-pereira/) |
+| Site e contato por WhatsApp | [aiauditor.com.br/jefferson](https://aiauditor.com.br/jefferson/) |
+| Código e novidades da ferramenta | [github.com/jeffersoncp21/follow-up-planos-de-acao](https://github.com/jeffersoncp21/follow-up-planos-de-acao) |
+
+> **Gostou da ferramenta?** Siga o Jefferson no LinkedIn para acompanhar novas versões e conteúdos sobre IA na auditoria interna, e compartilhe o link do GitHub com outros auditores.
