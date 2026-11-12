@@ -1,0 +1,6 @@
+.claude/
+node_modules/
+*.log
+# planilhas de trabalho não devem ir para o repositório
+*.xlsx
+*.xls
